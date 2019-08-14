@@ -15,9 +15,13 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
-add_subdirectory(./external/entt)
-add_subdirectory(./external/glad)
+if(NOT EMSCRIPTEN)
+	add_subdirectory(./external/glad)
+endif()
+
 add_subdirectory(./external/imgui)
+
+add_subdirectory(./external/entt)
 add_subdirectory(./external/imgui_entt_entity_editor)
 
 add_subdirectory(./src)

@@ -11,7 +11,7 @@ add_executable(demo_sdl_opengl3
 
 target_link_libraries(demo_sdl_opengl3
 	imgui
-	imgui_impl_opengl3
+	imgui_impl_opengl3_glad
 	imgui_impl_sdl
 
 	EnTT
