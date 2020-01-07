@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.7.2)
 # Project configuration
 #
 
-project(EnTT VERSION 3.1.0)
+project(EnTT VERSION 3.2.2)
 
 set(SETTINGS_ORGANIZATION "Michele Caini")
 set(SETTINGS_APPLICATION ${PROJECT_NAME})
