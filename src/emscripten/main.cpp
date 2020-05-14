@@ -35,18 +35,18 @@ namespace MM {
 template <>
 void ComponentEditorWidget<Transform>(entt::registry& reg, entt::registry::entity_type e)
 {
-    auto& t = reg.get<Transform>(e);
-    // the "##Transform" ensures that you can use the name "x" in multiple lables
-    ImGui::DragFloat("x##Transform", &t.x, 0.1f);
-    ImGui::DragFloat("y##Transform", &t.y, 0.1f);
+	auto& t = reg.get<Transform>(e);
+	// the "##Transform" ensures that you can use the name "x" in multiple lables
+	ImGui::DragFloat("x##Transform", &t.x, 0.1f);
+	ImGui::DragFloat("y##Transform", &t.y, 0.1f);
 }
 
 template <>
 void ComponentEditorWidget<Velocity>(entt::registry& reg, entt::registry::entity_type e)
 {
-    auto& v = reg.get<Velocity>(e);
-    ImGui::DragFloat("x##Velocity", &v.x, 0.1f);
-    ImGui::DragFloat("y##Velocity", &v.y, 0.1f);
+	auto& v = reg.get<Velocity>(e);
+	ImGui::DragFloat("x##Velocity", &v.x, 0.1f);
+	ImGui::DragFloat("y##Velocity", &v.y, 0.1f);
 }
 }
 
@@ -57,7 +57,7 @@ SDL_Window* g_win = nullptr;
 SDL_GLContext g_gl_context;
 
 entt::registry reg;
-MM::ImGuiEntityEditor<decltype(reg)> editor;
+MM::EntityEditor<entt::entity> editor;
 
 entt::entity e = entt::null;
 
@@ -116,8 +116,8 @@ int main(int argc, char** argv) {
 	}
 
 
-    editor.registerComponent<Transform>("Transform");
-    editor.registerComponent<Velocity>("Velocity");
+	editor.registerComponent<Transform>("Transform");
+	editor.registerComponent<Velocity>("Velocity");
 
 
 	// main loop
