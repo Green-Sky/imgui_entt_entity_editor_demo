@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.7.2)
 
+project(editor_demo)
+
 #
 # Building in-tree is not allowed (we take care of your craziness).
 #
