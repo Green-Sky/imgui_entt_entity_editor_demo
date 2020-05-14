@@ -1,10 +1,5 @@
 cmake_minimum_required(VERSION 3.7.2)
 
-project(demo)
-
-
-########################
-
 add_executable(demo_sdl_opengl3
 	main.cpp
 )
