@@ -75,8 +75,8 @@ int main(int argc, char** argv)
 	entt::entity e = reg.create();
 	// setup nice initial entity
 	{
-		reg.assign<Components::Transform>(e, 500.f, 500.f);
-		reg.assign<Components::Velocity>(e, 500.f, 500.f);
+		reg.emplace<Components::Transform>(e, 500.f, 500.f);
+		reg.emplace<Components::Velocity>(e, 500.f, 500.f);
 	}
 
 	// main loop
