@@ -15,5 +15,7 @@ target_link_libraries(demo_emscripten_gles3
 	EnTT
 
 	imgui_entt_entity_editor
+
+	systems
 )
 

@@ -12,5 +12,7 @@ target_link_libraries(demo_sdl_opengl3
 	EnTT
 
 	imgui_entt_entity_editor
+
+	systems
 )
 

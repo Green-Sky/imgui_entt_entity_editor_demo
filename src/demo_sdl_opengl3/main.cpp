@@ -11,34 +11,8 @@
 
 #include <iostream>
 
-struct Transform {
-	float x = 0.f;
-	float y = 0.f;
-};
+#include <velocity.hpp>
 
-struct Velocity {
-	float x = 0.f;
-	float y = 0.f;
-};
-
-namespace MM {
-template <>
-void ComponentEditorWidget<Transform>(entt::registry& reg, entt::registry::entity_type e)
-{
-	auto& t = reg.get<Transform>(e);
-	// the "##Transform" ensures that you can use the name "x" in multiple lables
-	ImGui::DragFloat("x##Transform", &t.x, 0.1f);
-	ImGui::DragFloat("y##Transform", &t.y, 0.1f);
-}
-
-template <>
-void ComponentEditorWidget<Velocity>(entt::registry& reg, entt::registry::entity_type e)
-{
-	auto& v = reg.get<Velocity>(e);
-	ImGui::DragFloat("x##Velocity", &v.x, 0.1f);
-	ImGui::DragFloat("y##Velocity", &v.y, 0.1f);
-}
-}
 
 int main(int argc, char** argv)
 {
@@ -95,10 +69,16 @@ int main(int argc, char** argv)
 
 	MM::EntityEditor<entt::entity> editor;
 
-	editor.registerComponent<Transform>("Transform");
-	editor.registerComponent<Velocity>("Velocity");
+	editor.registerComponent<Components::Transform>("Transform");
+	editor.registerComponent<Components::Velocity>("Velocity");
 
-	entt::entity e = entt::null;
+	entt::entity e = reg.create();
+	// setup nice initial entity
+	{
+		reg.assign<Components::Transform>(e, 500.f, 500.f);
+		reg.assign<Components::Velocity>(e, 500.f, 500.f);
+	}
+
 	// main loop
 	bool run = true;
 	while (run) {
@@ -112,12 +92,32 @@ int main(int argc, char** argv)
 			}
 		}
 
+		Systems::Velocity(reg, 1.f/60.f);
+
 		// imgui new frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(win);
 		ImGui::NewFrame();
 
 		// ======== imgui guis go here ========
+
+		// debug draw entities
+		{
+			auto* dl = ImGui::GetBackgroundDrawList();
+			reg.view<Components::Transform>().each(
+			[&](auto e, Components::Transform& trans) {
+				auto e_int = entt::to_integral(e) + 1;
+
+				// generate color based on id
+				auto col = IM_COL32((13*e_int)%256,(159*e_int)%256,(207*e_int)%256,250);
+
+				dl->AddCircleFilled(
+					ImVec2(trans.x, trans.y),
+					10.f,
+					col
+				);
+			});
+		}
 
 		// render editor
 		editor.render(reg, e);

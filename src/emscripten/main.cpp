@@ -19,36 +19,37 @@
 #include <imgui_entt_entity_editor.hpp>
 
 
+#include <velocity.hpp>
 
 
-struct Transform {
-	float x = 0.f;
-	float y = 0.f;
-};
+//struct Transform {
+	//float x = 0.f;
+	//float y = 0.f;
+//};
 
-struct Velocity {
-	float x = 0.f;
-	float y = 0.f;
-};
+//struct Velocity {
+	//float x = 0.f;
+	//float y = 0.f;
+//};
 
-namespace MM {
-template <>
-void ComponentEditorWidget<Transform>(entt::registry& reg, entt::registry::entity_type e)
-{
-	auto& t = reg.get<Transform>(e);
-	// the "##Transform" ensures that you can use the name "x" in multiple lables
-	ImGui::DragFloat("x##Transform", &t.x, 0.1f);
-	ImGui::DragFloat("y##Transform", &t.y, 0.1f);
-}
+//namespace MM {
+//template <>
+//void ComponentEditorWidget<Transform>(entt::registry& reg, entt::registry::entity_type e)
+//{
+	//auto& t = reg.get<Transform>(e);
+	//// the "##Transform" ensures that you can use the name "x" in multiple lables
+	//ImGui::DragFloat("x##Transform", &t.x, 0.1f);
+	//ImGui::DragFloat("y##Transform", &t.y, 0.1f);
+//}
 
-template <>
-void ComponentEditorWidget<Velocity>(entt::registry& reg, entt::registry::entity_type e)
-{
-	auto& v = reg.get<Velocity>(e);
-	ImGui::DragFloat("x##Velocity", &v.x, 0.1f);
-	ImGui::DragFloat("y##Velocity", &v.y, 0.1f);
-}
-}
+//template <>
+//void ComponentEditorWidget<Velocity>(entt::registry& reg, entt::registry::entity_type e)
+//{
+	//auto& v = reg.get<Velocity>(e);
+	//ImGui::DragFloat("x##Velocity", &v.x, 0.1f);
+	//ImGui::DragFloat("y##Velocity", &v.y, 0.1f);
+//}
+//}
 
 void main_loop(void* arg);
 
@@ -116,50 +117,15 @@ int main(int argc, char** argv) {
 	}
 
 
-	editor.registerComponent<Transform>("Transform");
-	editor.registerComponent<Velocity>("Velocity");
+	editor.registerComponent<Components::Transform>("Transform");
+	editor.registerComponent<Components::Velocity>("Velocity");
 
-
-	// main loop
-	//bool run = true;
-	//while (run) {
-		//// process events
-		//SDL_Event event;
-		//while (SDL_PollEvent(&event)) {
-			//if (event.type == SDL_QUIT) {
-				//run = false;
-			//} else {
-				//ImGui_ImplSDL2_ProcessEvent(&event);
-			//}
-		//}
-
-		//// imgui new frame
-		//ImGui_ImplOpenGL3_NewFrame();
-		//ImGui_ImplSDL2_NewFrame(win);
-		//ImGui::NewFrame();
-
-		//// ======== imgui guis go here ========
-
-		//// render editor
-		//editor.renderImGui(reg, e);
-
-		//// render (end frame)
-		//ImGui::Render();
-		//glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		//glClear(GL_COLOR_BUFFER_BIT);
-		//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		//SDL_GL_SwapWindow(win);
-	//}
-
-
-	//ImGui_ImplOpenGL3_Shutdown();
-	//ImGui_ImplSDL2_Shutdown();
-	//ImGui::DestroyContext();
-
-	//SDL_GL_DeleteContext(gl_context);
-	//SDL_DestroyWindow(win);
-	//SDL_Quit();
+	e = reg.create();
+	// setup nice initial entity
+	{
+		reg.assign<Components::Transform>(e, 500.f, 500.f);
+		reg.assign<Components::Velocity>(e, 500.f, 500.f);
+	}
 
 	//return 0;
 	emscripten_set_main_loop_arg(main_loop, NULL, 0, true);
@@ -175,12 +141,32 @@ void main_loop(void* arg) {
 		ImGui_ImplSDL2_ProcessEvent(&event);
 	}
 
+	Systems::Velocity(reg, 1.f/60.f);
+
 	// imgui new frame
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(g_win);
 	ImGui::NewFrame();
 
 	// ======== imgui guis go here ========
+
+	// debug draw entities
+	{
+		auto* dl = ImGui::GetBackgroundDrawList();
+		reg.view<Components::Transform>().each(
+		[&](auto e, Components::Transform& trans) {
+			auto e_int = entt::to_integral(e) + 1;
+
+			// generate color based on id
+			auto col = IM_COL32((13*e_int)%256,(159*e_int)%256,(207*e_int)%256,250);
+
+			dl->AddCircleFilled(
+				ImVec2(trans.x, trans.y),
+				10.f,
+				col
+			);
+		});
+	}
 
 	// render editor
 	editor.render(reg, e);
