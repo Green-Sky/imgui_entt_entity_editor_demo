@@ -16,7 +16,7 @@
 
 int main(int argc, char** argv)
 {
-
+	srand(1336);
 	// setup sdl and gl
 	if (SDL_Init(SDL_INIT_EVERYTHING)) {
 		std::cerr << "error initializing sdl\n";
@@ -72,11 +72,17 @@ int main(int argc, char** argv)
 	editor.registerComponent<Components::Transform>("Transform");
 	editor.registerComponent<Components::Velocity>("Velocity");
 
-	entt::entity e = reg.create();
-	// setup nice initial entity
-	{
-		reg.emplace<Components::Transform>(e, 500.f, 500.f);
-		reg.emplace<Components::Velocity>(e, 500.f, 500.f);
+	entt::entity e;
+
+	for (size_t i = 0; i < 1000; i++) {
+		e = reg.create();
+		// setup nice initial entity
+		{
+			//reg.emplace<Components::Transform>(e, 500.f, 500.f);
+			//reg.emplace<Components::Velocity>(e, 500.f, 500.f);
+			reg.emplace<Components::Transform>(e, float(rand()%5000)/10, float(rand()%5000)/10);
+			reg.emplace<Components::Velocity>(e, float((rand()%5000) - 2500)/10, float((rand()%5000) - 2500)/10);
+		}
 	}
 
 	// main loop
@@ -120,7 +126,7 @@ int main(int argc, char** argv)
 		}
 
 		// render editor
-		editor.render(reg, e);
+		editor.renderSimpleCombo(reg, e);
 
 		// render (end frame)
 		ImGui::Render();

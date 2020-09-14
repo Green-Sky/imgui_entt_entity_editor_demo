@@ -22,35 +22,6 @@
 #include <velocity.hpp>
 
 
-//struct Transform {
-	//float x = 0.f;
-	//float y = 0.f;
-//};
-
-//struct Velocity {
-	//float x = 0.f;
-	//float y = 0.f;
-//};
-
-//namespace MM {
-//template <>
-//void ComponentEditorWidget<Transform>(entt::registry& reg, entt::registry::entity_type e)
-//{
-	//auto& t = reg.get<Transform>(e);
-	//// the "##Transform" ensures that you can use the name "x" in multiple lables
-	//ImGui::DragFloat("x##Transform", &t.x, 0.1f);
-	//ImGui::DragFloat("y##Transform", &t.y, 0.1f);
-//}
-
-//template <>
-//void ComponentEditorWidget<Velocity>(entt::registry& reg, entt::registry::entity_type e)
-//{
-	//auto& v = reg.get<Velocity>(e);
-	//ImGui::DragFloat("x##Velocity", &v.x, 0.1f);
-	//ImGui::DragFloat("y##Velocity", &v.y, 0.1f);
-//}
-//}
-
 void main_loop(void* arg);
 
 // globals
@@ -120,12 +91,17 @@ int main(int argc, char** argv) {
 	editor.registerComponent<Components::Transform>("Transform");
 	editor.registerComponent<Components::Velocity>("Velocity");
 
-	e = reg.create();
-	// setup nice initial entity
-	{
-		reg.emplace<Components::Transform>(e, 500.f, 500.f);
-		reg.emplace<Components::Velocity>(e, 500.f, 500.f);
+	for (size_t i = 0; i < 500; i++) {
+		e = reg.create();
+		// setup nice initial entity
+		{
+			//reg.emplace<Components::Transform>(e, 500.f, 500.f);
+			//reg.emplace<Components::Velocity>(e, 500.f, 500.f);
+			reg.emplace<Components::Transform>(e, float(rand()%5000)/10, float(rand()%5000)/10);
+			reg.emplace<Components::Velocity>(e, float((rand()%5000) - 2500)/10, float((rand()%5000) - 2500)/10);
+		}
 	}
+
 
 	//return 0;
 	emscripten_set_main_loop_arg(main_loop, NULL, 0, true);
@@ -169,7 +145,7 @@ void main_loop(void* arg) {
 	}
 
 	// render editor
-	editor.render(reg, e);
+	editor.renderSimpleCombo(reg, e);
 
 	// render (end frame)
 	ImGui::Render();
